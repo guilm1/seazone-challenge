@@ -15,10 +15,13 @@ if (!process.env.DATABASE_URL) {
 }
 
 async function seed() {
-  // Dynamic imports run after dotenv has populated process.env
-  const { db } = await import('./index')
+  const { Pool } = await import('pg')
+  const { drizzle } = await import('drizzle-orm/node-postgres')
   const { properties } = await import('./schema')
   const { PropertySchema } = await import('@seazone/shared')
+
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+  const db = drizzle(pool)
 
   const dataDir = path.resolve(process.cwd(), '../../data/properties')
   console.log(`Reading property files from: ${dataDir}`)
@@ -85,6 +88,7 @@ async function seed() {
   }
 
   console.log('Seed complete.')
+  await pool.end()
   process.exit(0)
 }
 

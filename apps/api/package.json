@@ -17,7 +17,7 @@
     "@anthropic-ai/sdk": "^0.27.0",
     "@neondatabase/serverless": "^1.1.0",
     "@seazone/shared": "workspace:*",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.36.0",
     "next": "14.2.5",
     "pg": "^8.12.0",
     "react": "^18.3.1",
@@ -30,7 +30,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "dotenv": "^16.4.5",
-    "drizzle-kit": "^0.24.0",
+    "drizzle-kit": "^0.27.0",
     "tsx": "^4.17.0",
     "typescript": "^5.5.3"
   }
