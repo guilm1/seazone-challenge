@@ -1,0 +1,51 @@
+{
+    "address": {
+        "city": "Gramado",
+        "complement": null,
+        "neighborhood": "Planalto",
+        "number": "220",
+        "postal_code": "95670-000",
+        "state": "RS",
+        "street": "Rua das Hortênsias"
+    },
+    "amenities": {
+        "balcony": true,
+        "bbq_grill": true,
+        "dishwasher": true,
+        "kitchen": true,
+        "tv": true,
+        "wifi": true
+    },
+    "bathroom_quantity": 2,
+    "bedroom_quantity": 3,
+    "code": "GRM001",
+    "guest_capacity": 6,
+    "host": {
+        "name": "Carlos Eduardo",
+        "phone": "+5554998765432"
+    },
+    "images": [
+        "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800"
+    ],
+    "name": "Chalé Serra Gramado",
+    "operational": {
+        "has_parking_spot": true,
+        "is_self_checkin": false,
+        "parking_spot_instructions": "Garagem própria para 2 carros",
+        "property_access_instructions": "A chave está no cofre na entrada. Código: 1983",
+        "property_access_type": "keybox",
+        "property_password": "1983",
+        "wifi_network": "ChaletSerra_GRM",
+        "wifi_password": "gramado@2024"
+    },
+    "property_type": "Casa",
+    "rules": {
+        "allow_pet": true,
+        "check_in_time": "14:00",
+        "check_out_time": "12:00",
+        "events_permitted": false,
+        "smoking_permitted": false,
+        "suitable_for_babies": false,
+        "suitable_for_children": true
+    }
+}

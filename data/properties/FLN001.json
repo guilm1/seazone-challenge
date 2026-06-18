@@ -1,0 +1,53 @@
+{
+    "address": {
+        "city": "Florianópolis",
+        "complement": "Apto 301",
+        "neighborhood": "Trindade",
+        "number": "589",
+        "postal_code": "88036-001",
+        "state": "SC",
+        "street": "Rua Lauro Linhares"
+    },
+    "amenities": {
+        "air_conditioning": true,
+        "balcony": true,
+        "elevator": true,
+        "kitchen": true,
+        "tv": true,
+        "washing_machine": true,
+        "wifi": true
+    },
+    "bathroom_quantity": 1,
+    "bedroom_quantity": 2,
+    "code": "FLN001",
+    "guest_capacity": 4,
+    "host": {
+        "name": "Ana Paula",
+        "phone": "+5548991234567"
+    },
+    "images": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800"
+    ],
+    "name": "Apartamento Beira-Mar Florianópolis",
+    "operational": {
+        "has_parking_spot": true,
+        "is_self_checkin": true,
+        "parking_spot_identifier": "Vaga 12 — subsolo B1",
+        "parking_spot_instructions": "Portão lateral, código 7890 no interfone",
+        "property_access_instructions": "Use o código 4521 na fechadura eletrônica",
+        "property_access_type": "smart_lock",
+        "property_password": "4521",
+        "wifi_network": "SeaHome_FLN001",
+        "wifi_password": "floripa2024"
+    },
+    "property_type": "Apartamento",
+    "rules": {
+        "allow_pet": false,
+        "check_in_time": "15:00",
+        "check_out_time": "11:00",
+        "events_permitted": false,
+        "smoking_permitted": false,
+        "suitable_for_babies": true,
+        "suitable_for_children": true
+    }
+}

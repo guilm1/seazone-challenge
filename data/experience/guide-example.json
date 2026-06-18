@@ -1,0 +1,31 @@
+{
+    "attractions": [
+        {
+            "description": "Famosa pelas dunas e pelas ondas para surf.",
+            "distance": "Aprox. 18 km",
+            "name": "Praia da Joaquina"
+        }
+    ],
+    "essentials": [
+        {
+            "description": "Farmácia 24h na Av. Madre Benvenuta.",
+            "distance": "Aprox. 300 metros",
+            "name": "Farmácia Catarinense",
+            "type": "pharmacy"
+        }
+    ],
+    "restaurants": [
+        {
+            "description": "Boteco tradicional de Florianópolis, famoso pelos petiscos.",
+            "distance": "Aprox. 1,2 km",
+            "name": "Box 32"
+        },
+        {
+            "description": "Referência em frutos do mar desde 1958.",
+            "distance": "Aprox. 2,5 km",
+            "name": "Armazém Vieira"
+        }
+    ],
+    "seasonal_tips": "Em maio, as temperaturas ficam entre 16°C e 22°C. Leve um agasalho.",
+    "welcome_message": "Seu apartamento fica no coração da Trindade, a poucos minutos das principais atrações da ilha..."
+}
