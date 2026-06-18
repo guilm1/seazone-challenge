@@ -161,6 +161,48 @@ npx vitest run
 
 ---
 
+## SDLC Augmentado com IA
+
+Este projeto foi desenvolvido integralmente com [Claude Code](https://claude.ai/code) como par de desenvolvimento — não como gerador de boilerplate, mas como agente ativo em cada fase do ciclo.
+
+### Como o fluxo funcionou
+
+```
+Briefing → Spec → Implementação paralela → Iteração → Testes → Commit
+```
+
+**1. Spec como ponto de partida (não o código)**  
+Antes de qualquer arquivo de aplicação ser criado, os schemas Zod em `packages/shared/` foram definidos colaborativamente. O shape dos dados ditou os contratos da API, os tipos do frontend e os prompts da IA — todos derivados da mesma fonte.
+
+**2. Paralelização via worktree agents**  
+Frontend e backend foram implementados simultaneamente usando dois agentes em worktrees Git isolados:
+
+```
+main
+├── worktree-agent-abc8ac0   ← apps/api (backend completo)
+└── worktree-agent-aef4513   ← apps/web (frontend completo)
+```
+
+Cada agente trabalhou de forma autônoma no seu contexto, sem interferência. O merge aconteceu sobre contratos já validados.
+
+**3. Iteração orientada a comportamento**  
+Features subsequentes (i18n PT/EN/ES, schema de idioma no banco, prompts multilíngues) seguiram o mesmo padrão: spec primeiro → backend → frontend → testes. O agente manteve memória do projeto entre sessões via sistema de memória persistente.
+
+**4. Commits como documentação**  
+Cada commit reflete uma decisão de design, não apenas uma mudança de arquivo. A mensagem explica o *porquê*, não o *o quê* — padrão seguido pelo agente ao longo de todo o histórico.
+
+### O que o Claude Code gerenciou
+
+| Fase | Atividade |
+|---|---|
+| Planejamento | Definição de schemas, arquitetura de rotas, estratégia de cache |
+| Implementação | Backend (Drizzle, AI services, API routes), Frontend (Atomic Design, Context, streaming) |
+| Qualidade | Testes Vitest, validação de tipos, análise de segurança |
+| Refatoração | i18n sem biblioteca externa, composite PK, seed robusto |
+| Histórico | Commits semânticos com contexto de decisão |
+
+---
+
 ## Decisões Técnicas
 
 **Por que Next.js API-only para o backend?** Separa as responsabilidades sem adicionar um runtime diferente. Permite usar o mesmo tooling e tipos TypeScript em toda a monorepo.

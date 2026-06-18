@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
+    "@neondatabase/serverless": "^1.1.0",
     "@seazone/shared": "workspace:*",
     "drizzle-orm": "^0.33.0",
     "next": "14.2.5",

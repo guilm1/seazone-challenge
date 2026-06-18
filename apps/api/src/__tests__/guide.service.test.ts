@@ -27,7 +27,8 @@ vi.mock('drizzle-orm', () => ({
 import { getGuideStatus, startGeneration, saveGuide, saveGuideError } from '../services/guide.service'
 import { db } from '../db'
 
-const mockDb = db as ReturnType<typeof vi.fn> & typeof db
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockDb = db as any
 
 describe('getGuideStatus', () => {
   beforeEach(() => {
