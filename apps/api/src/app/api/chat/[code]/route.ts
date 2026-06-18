@@ -42,10 +42,11 @@ export async function POST(
       return NextResponse.json({ error: 'Imóvel não encontrado' }, { status: 404, headers: corsHeaders() })
     }
 
-    const guideStatus = await getGuideStatus(parsed.data)
+    const language = chatParsed.data.language ?? 'pt'
+    const guideStatus = await getGuideStatus(parsed.data, language)
     const guide = guideStatus.status === 'ready' ? guideStatus.guide : null
 
-    const stream = await streamChatResponse(property, guide, chatParsed.data.messages)
+    const stream = await streamChatResponse(property, guide, chatParsed.data.messages, language)
 
     return new NextResponse(stream, {
       headers: {

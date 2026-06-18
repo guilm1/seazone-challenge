@@ -1,4 +1,4 @@
-import { pgTable, varchar, text, boolean, integer, jsonb, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, varchar, text, boolean, integer, jsonb, timestamp, primaryKey } from 'drizzle-orm/pg-core'
 
 export const properties = pgTable('properties', {
   code: varchar('code', { length: 10 }).primaryKey(),
@@ -17,10 +17,13 @@ export const properties = pgTable('properties', {
 })
 
 export const aiGuides = pgTable('ai_guides', {
-  property_code: varchar('property_code', { length: 10 }).primaryKey(),
+  property_code: varchar('property_code', { length: 10 }).notNull(),
+  language: varchar('language', { length: 2 }).notNull().default('pt'),
   content: jsonb('content'),
   is_generating: boolean('is_generating').default(false).notNull(),
   error: text('error'),
   generated_at: timestamp('generated_at'),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
-})
+}, (t) => ({
+  pk: primaryKey({ columns: [t.property_code, t.language] }),
+}))

@@ -3,7 +3,13 @@ import type { Property, ExperienceGuide, ChatMessage } from '@seazone/shared'
 
 const client = new Anthropic()
 
-function buildSystemPrompt(property: Property, guide: ExperienceGuide | null): string {
+const languageInstructions: Record<string, string> = {
+  pt: 'Responda SEMPRE em português brasileiro, de forma amigável e concisa.',
+  en: 'Always respond in English, in a friendly and concise manner.',
+  es: 'Responde SIEMPRE en español, de manera amigable y concisa.',
+}
+
+function buildSystemPrompt(property: Property, guide: ExperienceGuide | null, language = 'pt'): string {
   const { address, operational, rules, amenities, host } = property
 
   const amenityList = Object.entries(amenities)
@@ -13,63 +19,66 @@ function buildSystemPrompt(property: Property, guide: ExperienceGuide | null): s
 
   const guideContext = guide
     ? `
-## Guia de Experiências do Bairro
-Boas-vindas: ${guide.welcome_message}
+## Neighborhood Experience Guide
+Welcome: ${guide.welcome_message}
 
-Restaurantes próximos:
+Nearby restaurants:
 ${guide.restaurants.map((r) => `- ${r.name} (${r.distance}): ${r.description}`).join('\n')}
 
-Atrações próximas:
+Nearby attractions:
 ${guide.attractions.map((a) => `- ${a.name} (${a.distance}): ${a.description}`).join('\n')}
 
-Serviços essenciais:
+Essential services:
 ${guide.essentials.map((e) => `- ${e.name} (${e.distance}): ${e.description}`).join('\n')}
 
-Dica sazonal: ${guide.seasonal_tips}
+Seasonal tip: ${guide.seasonal_tips}
 `
     : ''
 
-  return `Você é o assistente virtual do Guia do Hóspede Seazone para o imóvel "${property.name}".
+  const langInstruction = languageInstructions[language] ?? languageInstructions.pt
 
-## Dados do Imóvel
-- Endereço: ${address.street}, ${address.number}${address.complement ? `, ${address.complement}` : ''}, ${address.neighborhood}, ${address.city} - ${address.state}
-- Tipo: ${property.property_type}
-- Quartos: ${property.bedroom_quantity} | Banheiros: ${property.bathroom_quantity} | Capacidade: ${property.guest_capacity} hóspedes
-- Amenidades: ${amenityList}
+  return `You are the virtual assistant for the Seazone Guest Guide for the property "${property.name}".
 
-## Acesso
-- Rede WiFi: ${operational.wifi_network}
-- Tipo de acesso: ${operational.property_access_type}
-- Instruções de acesso: ${operational.property_access_instructions}
-${operational.has_parking_spot ? `- Estacionamento: ${operational.parking_spot_identifier ?? ''} — ${operational.parking_spot_instructions ?? ''}` : '- Sem vaga de estacionamento inclusa'}
+## Property Data
+- Address: ${address.street}, ${address.number}${address.complement ? `, ${address.complement}` : ''}, ${address.neighborhood}, ${address.city} - ${address.state}
+- Type: ${property.property_type}
+- Bedrooms: ${property.bedroom_quantity} | Bathrooms: ${property.bathroom_quantity} | Capacity: ${property.guest_capacity} guests
+- Amenities: ${amenityList}
 
-## Regras da Estadia
-- Check-in: a partir das ${rules.check_in_time}
-- Check-out: até ${rules.check_out_time}
-- Animais de estimação: ${rules.allow_pet ? 'permitidos' : 'NÃO permitidos'}
-- Fumar: ${rules.smoking_permitted ? 'permitido' : 'NÃO permitido'}
-- Crianças: ${rules.suitable_for_children ? 'adequado' : 'não adequado'}
-- Bebês: ${rules.suitable_for_babies ? 'adequado' : 'não adequado'}
-- Festas/eventos: ${rules.events_permitted ? 'permitidos' : 'NÃO permitidos'}
+## Access
+- WiFi Network: ${operational.wifi_network}
+- Access type: ${operational.property_access_type}
+- Access instructions: ${operational.property_access_instructions}
+${operational.has_parking_spot ? `- Parking: ${operational.parking_spot_identifier ?? ''} — ${operational.parking_spot_instructions ?? ''}` : '- No parking spot included'}
 
-## Contato do Anfitrião
-- Nome: ${host.name}
-- Telefone: ${host.phone}
+## Stay Rules
+- Check-in: from ${rules.check_in_time}
+- Check-out: until ${rules.check_out_time}
+- Pets: ${rules.allow_pet ? 'allowed' : 'NOT allowed'}
+- Smoking: ${rules.smoking_permitted ? 'allowed' : 'NOT allowed'}
+- Children: ${rules.suitable_for_children ? 'suitable' : 'not suitable'}
+- Babies: ${rules.suitable_for_babies ? 'suitable' : 'not suitable'}
+- Parties/events: ${rules.events_permitted ? 'allowed' : 'NOT allowed'}
+
+## Host Contact
+- Name: ${host.name}
+- Phone: ${host.phone}
 ${guideContext}
-## REGRAS IMPORTANTES DO ASSISTENTE
-1. Responda SEMPRE em português brasileiro, de forma amigável e concisa.
-2. Responda APENAS com base nas informações acima. Se não souber algo, diga claramente que não tem essa informação.
-3. NÃO invente informações que não estão nos dados acima.
-4. SEGURANÇA - SENHA DO WIFI: Se o hóspede perguntar sobre a senha do WiFi, você DEVE primeiro pedir o número de reserva antes de fornecê-la. Diga: "Por segurança, poderia me informar seu número de reserva?". Após o hóspede fornecer qualquer número de reserva, forneça a senha "${operational.wifi_password}" e adicione: "Lembrando que a senha do WiFi é atualizada a cada nova reserva, então esta senha é válida para sua estadia atual."
-5. Mantenha respostas curtas e objetivas (máximo 3-4 frases).`
+## IMPORTANT ASSISTANT RULES
+1. ${langInstruction}
+2. Answer ONLY based on the information above. If you don't know something, clearly say you don't have that information.
+3. Do NOT invent information that is not in the data above.
+4. SECURITY - WIFI PASSWORD: If the guest asks about the WiFi password, you MUST first ask for the reservation number before providing it. Say the equivalent of: "For security, could you please provide your reservation number?" After the guest provides any reservation number, provide the password "${operational.wifi_password}" and add: "Please note that the WiFi password is updated with each new reservation, so this password is valid for your current stay."
+5. Keep responses short and objective (maximum 3-4 sentences).`
 }
 
 export async function streamChatResponse(
   property: Property,
   guide: ExperienceGuide | null,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
+  language = 'pt'
 ): Promise<ReadableStream<Uint8Array>> {
-  const systemPrompt = buildSystemPrompt(property, guide)
+  const systemPrompt = buildSystemPrompt(property, guide, language)
 
   const stream = await client.messages.stream({
     model: 'claude-haiku-4-5-20251001',

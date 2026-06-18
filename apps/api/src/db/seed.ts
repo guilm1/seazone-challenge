@@ -1,12 +1,26 @@
+import { config } from 'dotenv'
 import * as fs from 'fs'
 import * as path from 'path'
-import { db } from './index'
-import { properties } from './schema'
-import { PropertySchema } from '@seazone/shared'
+
+// Must run before any module that reads DATABASE_URL
+config({ path: '.env.local' })
+
+if (!process.env.DATABASE_URL) {
+  console.error(
+    'Error: DATABASE_URL is not set.\n' +
+      'Make sure apps/api/.env.local exists and contains:\n' +
+      '  DATABASE_URL=postgresql://seazone:seazone@localhost:5432/seazone'
+  )
+  process.exit(1)
+}
 
 async function seed() {
-  const dataDir = path.join(process.cwd(), 'data', 'properties')
+  // Dynamic imports run after dotenv has populated process.env
+  const { db } = await import('./index')
+  const { properties } = await import('./schema')
+  const { PropertySchema } = await import('@seazone/shared')
 
+  const dataDir = path.resolve(process.cwd(), '../../data/properties')
   console.log(`Reading property files from: ${dataDir}`)
 
   let files: string[]

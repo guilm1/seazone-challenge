@@ -21,6 +21,7 @@ vi.mock('../db/schema', () => ({
 
 vi.mock('drizzle-orm', () => ({
   eq: vi.fn(),
+  and: vi.fn(),
 }))
 
 import { getGuideStatus, startGeneration, saveGuide, saveGuideError } from '../services/guide.service'

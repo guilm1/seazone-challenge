@@ -9,6 +9,7 @@ export const ChatMessageSchema = z.object({
 
 export const ChatRequestSchema = z.object({
   messages: z.array(ChatMessageSchema).min(1).max(20),
+  language: z.enum(['pt', 'en', 'es']).default('pt'),
 })
 
 export type ChatRole = z.infer<typeof ChatRoleSchema>
