@@ -1,18 +1,22 @@
+'use client'
+
 import type { Property } from '@seazone/shared'
 import SectionTitle from '../atoms/SectionTitle'
 import RuleItem from '../molecules/RuleItem'
 import Icon from '../atoms/Icon'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface StayRulesProps {
   property: Property
 }
 
 export default function StayRules({ property }: StayRulesProps) {
+  const { t } = useLanguage()
   const { rules } = property
 
   return (
     <section className="rounded-xl bg-white border border-gray-200 p-6 shadow-card">
-      <SectionTitle title="Regras da Estadia" icon="clock" />
+      <SectionTitle title={t('rules.title')} icon="clock" />
 
       <div className="mt-4">
         {/* Check-in/out times */}
@@ -36,34 +40,34 @@ export default function StayRules({ property }: StayRulesProps) {
         {/* Rules list */}
         <div className="divide-y divide-gray-100">
           <RuleItem
-            label="Animais de estimação"
+            label={t('rules.pets')}
             value={rules.allow_pet}
-            allowedText="Permitido"
-            notAllowedText="Não permitido"
+            allowedText={t('rules.allowed')}
+            notAllowedText={t('rules.notAllowed')}
           />
           <RuleItem
-            label="Fumar"
+            label={t('rules.smoking')}
             value={rules.smoking_permitted}
-            allowedText="Permitido"
-            notAllowedText="Não permitido"
+            allowedText={t('rules.allowed')}
+            notAllowedText={t('rules.notAllowed')}
           />
           <RuleItem
-            label="Adequado para crianças"
+            label={t('rules.children')}
             value={rules.suitable_for_children}
-            allowedText="Sim"
-            notAllowedText="Não recomendado"
+            allowedText={t('rules.yes')}
+            notAllowedText={t('rules.notRecommended')}
           />
           <RuleItem
-            label="Adequado para bebês"
+            label={t('rules.babies')}
             value={rules.suitable_for_babies}
-            allowedText="Sim"
-            notAllowedText="Não recomendado"
+            allowedText={t('rules.yes')}
+            notAllowedText={t('rules.notRecommended')}
           />
           <RuleItem
-            label="Eventos"
+            label={t('rules.events')}
             value={rules.events_permitted}
-            allowedText="Permitido"
-            notAllowedText="Não permitido"
+            allowedText={t('rules.allowed')}
+            notAllowedText={t('rules.notAllowed')}
           />
         </div>
       </div>

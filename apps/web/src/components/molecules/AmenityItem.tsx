@@ -1,14 +1,6 @@
-const amenityLabels: Record<string, string> = {
-  wifi: 'WiFi',
-  tv: 'TV',
-  air_conditioning: 'Ar-Condicionado',
-  kitchen: 'Cozinha',
-  washing_machine: 'Máquina de Lavar',
-  elevator: 'Elevador',
-  balcony: 'Varanda',
-  bbq_grill: 'Churrasqueira',
-  dishwasher: 'Lava-Louças',
-}
+'use client'
+
+import { useLanguage } from '@/contexts/LanguageContext'
 
 const amenityIcons: Record<string, string> = {
   wifi: '📶',
@@ -28,9 +20,12 @@ interface AmenityItemProps {
 }
 
 export default function AmenityItem({ amenityKey, available }: AmenityItemProps) {
+  const { t } = useLanguage()
   if (!available) return null
 
-  const label = amenityLabels[amenityKey] ?? amenityKey.replace(/_/g, ' ')
+  const label = t(`amenity.${amenityKey}`) !== `amenity.${amenityKey}`
+    ? t(`amenity.${amenityKey}`)
+    : amenityKey.replace(/_/g, ' ')
   const emoji = amenityIcons[amenityKey] ?? '✓'
 
   return (

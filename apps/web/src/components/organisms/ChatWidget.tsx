@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { streamChat } from '@/lib/api'
+import { useLanguage } from '@/contexts/LanguageContext'
 import ChatMessage from '../molecules/ChatMessage'
-import Button from '../atoms/Button'
 import Icon from '../atoms/Icon'
 
 interface ChatWidgetProps {
@@ -12,14 +12,8 @@ interface ChatWidgetProps {
 
 type Message = { role: 'user' | 'assistant'; content: string }
 
-const SUGGESTED_QUESTIONS = [
-  'Qual a senha do WiFi?',
-  'Posso trazer meu cachorro?',
-  'A que horas posso fazer check-in?',
-  'Que restaurantes ficam perto?',
-]
-
 export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
+  const { lang, t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -41,6 +35,11 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
     }
   }, [isOpen])
 
+  // Reset conversation when language changes
+  useEffect(() => {
+    setMessages([])
+  }, [lang])
+
   async function handleSend(content: string) {
     if (!content.trim() || isLoading) return
 
@@ -50,7 +49,7 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
     setIsLoading(true)
 
     try {
-      const reader = await streamChat(propertyCode, newMessages)
+      const reader = await streamChat(propertyCode, newMessages, lang)
       let assistantMessage = ''
       setMessages([...newMessages, { role: 'assistant', content: '' }])
 
@@ -64,7 +63,7 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
     } catch {
       setMessages([
         ...newMessages,
-        { role: 'assistant', content: 'Desculpe, ocorreu um erro. Tente novamente.' },
+        { role: 'assistant', content: t('chat.error') },
       ])
     } finally {
       setIsLoading(false)
@@ -78,6 +77,13 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
     }
   }
 
+  const suggestedQuestions = [
+    t('chat.q1'),
+    t('chat.q2'),
+    t('chat.q3'),
+    t('chat.q4'),
+  ]
+
   const chatContent = (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -87,17 +93,17 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
             <span className="text-white text-xs font-bold">S</span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-sea-deep">Assistente Virtual</p>
+            <p className="text-sm font-semibold text-sea-deep">{t('chat.title')}</p>
             <p className="text-xs text-green-500 flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-green-500 inline-block" />
-              Online
+              {t('chat.online')}
             </p>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(false)}
           className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-          aria-label="Fechar chat"
+          aria-label={t('chat.close')}
         >
           <Icon name="x" size={18} />
         </button>
@@ -111,12 +117,12 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
               <span className="text-white text-xl font-bold">S</span>
             </div>
             <div className="text-center">
-              <p className="text-sm font-semibold text-sea-deep">Olá! Sou o assistente virtual</p>
-              <p className="text-xs text-gray-500 mt-1">Posso responder suas dúvidas sobre a estadia</p>
+              <p className="text-sm font-semibold text-sea-deep">{t('chat.greeting')}</p>
+              <p className="text-xs text-gray-500 mt-1">{t('chat.greetingSubtitle')}</p>
             </div>
             <div className="w-full space-y-2 mt-2">
-              <p className="text-xs text-gray-400 text-center font-medium">Perguntas frequentes:</p>
-              {SUGGESTED_QUESTIONS.map((q) => (
+              <p className="text-xs text-gray-400 text-center font-medium">{t('chat.frequentQuestions')}</p>
+              {suggestedQuestions.map((q) => (
                 <button
                   key={q}
                   onClick={() => handleSend(q)}
@@ -137,6 +143,17 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
                 isStreaming={isLoading && i === messages.length - 1 && msg.role === 'assistant'}
               />
             ))}
+            {!isLoading && messages[messages.length - 1]?.role === 'assistant' && (
+              <div className="flex justify-center pt-1">
+                <button
+                  onClick={() => setMessages([])}
+                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-sea-deep transition-colors px-3 py-1.5 rounded-lg hover:bg-white"
+                >
+                  <Icon name="arrow-left" size={12} />
+                  {t('chat.backToFaq')}
+                </button>
+              </div>
+            )}
           </>
         )}
         <div ref={messagesEndRef} />
@@ -150,7 +167,7 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Digite sua dúvida..."
+          placeholder={t('chat.placeholder')}
           disabled={isLoading}
           className="flex-1 text-sm px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sea-deep placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sea-medium/30 focus:border-sea-medium disabled:opacity-50"
         />
@@ -158,7 +175,7 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
           onClick={() => handleSend(inputValue)}
           disabled={!inputValue.trim() || isLoading}
           className="flex-shrink-0 h-10 w-10 rounded-xl bg-gradient-to-b from-[hsl(220,100%,50%)] to-[hsl(220,100%,35%)] text-white flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-          aria-label="Enviar mensagem"
+          aria-label={t('chat.send')}
         >
           <Icon name="send" size={16} />
         </button>
@@ -190,14 +207,14 @@ export default function ChatWidget({ propertyCode }: ChatWidgetProps) {
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-0 left-0 right-0 md:bottom-6 md:right-6 md:left-auto md:rounded-full z-40 bg-gradient-to-b from-[hsl(220,100%,50%)] to-[hsl(220,100%,35%)] text-white shadow-elevated transition-all hover:opacity-90 md:h-14 md:w-14 md:flex md:items-center md:justify-center"
-          aria-label="Abrir assistente virtual"
+          aria-label={t('chat.openLabel')}
         >
           {/* Mobile bar */}
           <div className="flex items-center justify-center gap-3 px-4 py-3 md:hidden">
             <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
               <span className="text-white text-sm font-bold">S</span>
             </div>
-            <span className="text-sm font-medium">Assistente Virtual — Tire suas dúvidas</span>
+            <span className="text-sm font-medium">{t('chat.mobileLabel')}</span>
             <Icon name="chevron-down" size={16} className="rotate-180 flex-shrink-0" />
           </div>
           {/* Desktop icon */}

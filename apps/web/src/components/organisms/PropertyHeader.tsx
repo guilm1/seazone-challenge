@@ -1,13 +1,17 @@
+'use client'
+
 import type { Property } from '@seazone/shared'
 import Image from 'next/image'
 import Badge from '../atoms/Badge'
 import Icon from '../atoms/Icon'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface PropertyHeaderProps {
   property: Property
 }
 
 export default function PropertyHeader({ property }: PropertyHeaderProps) {
+  const { t } = useLanguage()
   const heroImage = property.images[0]
 
   return (
@@ -46,19 +50,22 @@ export default function PropertyHeader({ property }: PropertyHeaderProps) {
           <div className="flex items-center gap-1.5">
             <span>🛏</span>
             <span>
-              {property.bedroom_quantity} {property.bedroom_quantity === 1 ? 'quarto' : 'quartos'}
+              {property.bedroom_quantity}{' '}
+              {property.bedroom_quantity === 1 ? t('property.bedroom') : t('property.bedrooms')}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
             <span>🚿</span>
             <span>
-              {property.bathroom_quantity} {property.bathroom_quantity === 1 ? 'banheiro' : 'banheiros'}
+              {property.bathroom_quantity}{' '}
+              {property.bathroom_quantity === 1 ? t('property.bathroom') : t('property.bathrooms')}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
             <Icon name="users" size={16} />
             <span>
-              {property.guest_capacity} {property.guest_capacity === 1 ? 'hóspede' : 'hóspedes'}
+              {property.guest_capacity}{' '}
+              {property.guest_capacity === 1 ? t('property.guest') : t('property.guests')}
             </span>
           </div>
         </div>
@@ -66,7 +73,7 @@ export default function PropertyHeader({ property }: PropertyHeaderProps) {
         <div className="flex items-center gap-1.5 text-white/80 text-sm">
           <Icon name="phone" size={14} />
           <span>
-            Anfitrião: {property.host.name} · {property.host.phone}
+            {t('property.host')}: {property.host.name} · {property.host.phone}
           </span>
         </div>
       </div>

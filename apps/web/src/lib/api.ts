@@ -1,4 +1,5 @@
 import type { Property, ExperienceGuide } from '@seazone/shared'
+import type { Lang } from '@/lib/translations'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'
 
@@ -15,29 +16,30 @@ export async function fetchProperty(code: string): Promise<Property | null> {
   return res.json()
 }
 
-export async function fetchGuide(code: string): Promise<GuideResponse> {
-  const res = await fetch(`${API_URL}/api/guide/${code}`, { cache: 'no-store' })
-  if (!res.ok) return { status: 'error', error: 'Falha ao buscar guia' }
+export async function fetchGuide(code: string, lang: Lang = 'pt'): Promise<GuideResponse> {
+  const res = await fetch(`${API_URL}/api/guide/${code}?lang=${lang}`, { cache: 'no-store' })
+  if (!res.ok) return { status: 'error', error: 'Failed to fetch guide' }
   return res.json()
 }
 
-export async function generateGuide(code: string): Promise<GuideResponse> {
-  const res = await fetch(`${API_URL}/api/guide/${code}/generate`, { method: 'POST', cache: 'no-store' })
+export async function generateGuide(code: string, lang: Lang = 'pt'): Promise<GuideResponse> {
+  const res = await fetch(`${API_URL}/api/guide/${code}/generate?lang=${lang}`, { method: 'POST', cache: 'no-store' })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    return { status: 'error', error: (err as { error?: string }).error ?? 'Falha ao gerar guia' }
+    return { status: 'error', error: (err as { error?: string }).error ?? 'Failed to generate guide' }
   }
   return res.json()
 }
 
 export async function streamChat(
   code: string,
-  messages: Array<{ role: 'user' | 'assistant'; content: string }>
+  messages: Array<{ role: 'user' | 'assistant'; content: string }>,
+  lang: Lang = 'pt'
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
   const res = await fetch(`${API_URL}/api/chat/${code}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, language: lang }),
   })
   if (!res.ok) throw new Error('Chat request failed')
   return res.body!.getReader()

@@ -1,6 +1,9 @@
+'use client'
+
 import type { Property } from '@seazone/shared'
 import SectionTitle from '../atoms/SectionTitle'
 import Icon from '../atoms/Icon'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface ContactSectionProps {
   property: Property
@@ -18,6 +21,7 @@ function formatBrazilianPhone(phone: string): string {
 }
 
 export default function ContactSection({ property }: ContactSectionProps) {
+  const { t } = useLanguage()
   const { host, address } = property
   const formattedPhone = formatBrazilianPhone(host.phone)
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -26,7 +30,7 @@ export default function ContactSection({ property }: ContactSectionProps) {
 
   return (
     <section className="rounded-xl bg-white border border-gray-200 p-6 shadow-card">
-      <SectionTitle title="Contato e Localização" icon="phone" />
+      <SectionTitle title={t('contact.title')} icon="phone" />
 
       <div className="mt-4 space-y-4">
         {/* Host contact */}
@@ -69,7 +73,7 @@ export default function ContactSection({ property }: ContactSectionProps) {
               className="mt-2 inline-flex items-center gap-1.5 text-sea-medium text-sm font-medium hover:underline"
             >
               <Icon name="map-pin" size={14} />
-              Ver no mapa
+              {t('contact.viewMap')}
             </a>
           </div>
         </div>
